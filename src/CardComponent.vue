@@ -33,6 +33,7 @@ const props = defineProps({
 
 <style scoped>
 .card {
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: #ffffff;
