@@ -6,6 +6,7 @@ export const useStore = defineStore('store', {
     state: () => ({
         user: null,
         user_email: null,
+        items: [],
     }),
     actions: {
         async sendAuthEmail(email) {
@@ -58,6 +59,15 @@ export const useStore = defineStore('store', {
                 const { data, error } = await supabase.auth.getSession()
                 if (error) throw error
                 return data.session.access_token
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async getItems() {
+            try {
+                const { data, error } = await supabase.from('items').select('*')
+                if (error) throw error
+                this.items = data
             } catch (error) {
                 console.error(error)
             }
