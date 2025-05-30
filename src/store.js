@@ -8,6 +8,7 @@ export const useStore = defineStore('store', {
         user_email: null,
         items: [],
         searchResults: [],
+        searchActive: false,
     }),
     actions: {
         async sendAuthEmail(email) {
@@ -75,11 +76,17 @@ export const useStore = defineStore('store', {
         },
         async search(query) {
             try {
-                const data = await search(query)
-                return data
+                const results = await search(query)
+                this.searchResults = results
+                this.searchActive = true
+                return results
             } catch (error) {
                 console.error(error)
             }
+        },
+        clearSearch() {
+            this.searchResults = []
+            this.searchActive = false
         },
     },
 })

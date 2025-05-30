@@ -10,8 +10,7 @@ const url = ref('')
 const data = ref(null)
 
 const itemsToDisplay = computed(() => {
-    return store.searchResults.length > 0 
-    ? store.searchResults : store.items
+    return store.searchActive ? store.searchResults : store.items
 })
 
 const processUrl = async () => {
@@ -37,6 +36,10 @@ onMounted(async () => {
     <div>
         <h2>Items</h2>
         <SearchComponent />
+
+        <p v-if="store.searchActive && store.searchResults.length === 0">
+            No results found.
+        </p>
 
         <div class="card-grid">
             <CardComponent

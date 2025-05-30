@@ -1,31 +1,44 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useStore } from './store'
 
 const store = useStore()
-
 const query = ref('')
 
-const handleSearch = async () => {
-    if (query.value.length > 3) {
-        const results = await store.search(query.value)
-        if (results) {
-            store.searchResults = results
-        }
-    }
+// simple debounce helper
+const debounce = (fn, delay = 400) => {
+  let t
+  return (...args) => {
+    clearTimeout(t)
+    t = setTimeout(() => fn(...args), delay)
+  }
 }
+
+const runSearch = debounce(async (q) => {
+  await store.search(q)
+})
+
+watch(query, (val) => {
+  const trimmed = val.trim()
+
+  // clear search when empty or less than 3 chars
+  if (trimmed.length < 2) {
+    store.clearSearch()
+    return
+  }
+
+  runSearch(trimmed)
+})
 </script>
 
 <template>
-    <div class="search-container">
-        <input
-            type="text"
-            placeholder="Search"
-            v-model="query"
-            @change="handleSearch"
-            @blur="handleSearch"
-        />
-    </div>
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Search"
+      v-model="query"
+    />
+  </div>
 </template>
 
 <style scoped>
