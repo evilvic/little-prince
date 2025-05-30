@@ -20,6 +20,11 @@ export const ingestUrl = async (url) => {
     return response.data
 }
 
+export const search = async (query) => {
+    const response = await api.get('/search', { params: { query } })
+    return response.data
+}
+
 api.interceptors.request.use(async (config) => {
     const jwt = await getJWT()
     config.headers.Authorization = `Bearer ${jwt}`

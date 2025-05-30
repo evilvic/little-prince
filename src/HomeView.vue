@@ -1,13 +1,18 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStore } from './store'
 import CardComponent from './CardComponent.vue'
+import SearchComponent from './SearchComponent.vue'
 
 const store = useStore()
 
 const url = ref('')
 const data = ref(null)
-const items = ref(null)
+
+const itemsToDisplay = computed(() => {
+    return store.searchResults.length > 0 
+    ? store.searchResults : store.items
+})
 
 const processUrl = async () => {
     const response = await store.processUrl(url.value)
@@ -16,7 +21,6 @@ const processUrl = async () => {
 
 onMounted(async () => {
     await store.getItems()
-    items.value = store.items
 })
 </script>
 
@@ -30,12 +34,13 @@ onMounted(async () => {
             <pre>{{ data }}</pre>
         </div>
     </div>
-    <div v-if="items">
+    <div>
         <h2>Items</h2>
+        <SearchComponent />
 
         <div class="card-grid">
             <CardComponent
-                v-for="item in items"
+                v-for="item in itemsToDisplay"
                 :key="item.id"
                 :item="item"
                 class="grid-item"

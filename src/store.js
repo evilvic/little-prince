@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import supabase from './supabase'
-import { ingestUrl } from './api'
+import { ingestUrl, search } from './api'
 
 export const useStore = defineStore('store', {
     state: () => ({
         user: null,
         user_email: null,
         items: [],
+        searchResults: [],
     }),
     actions: {
         async sendAuthEmail(email) {
@@ -68,6 +69,14 @@ export const useStore = defineStore('store', {
                 const { data, error } = await supabase.from('items').select('*')
                 if (error) throw error
                 this.items = data
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        async search(query) {
+            try {
+                const data = await search(query)
+                return data
             } catch (error) {
                 console.error(error)
             }
