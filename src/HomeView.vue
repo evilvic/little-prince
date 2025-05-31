@@ -3,11 +3,13 @@ import { ref, onMounted, computed } from 'vue'
 import { useStore } from './store'
 import CardComponent from './CardComponent.vue'
 import SearchComponent from './SearchComponent.vue'
+import DetailModal from './DetailModal.vue'
 
 const store = useStore()
 
 const url = ref('')
 const data = ref(null)
+const selectedItem = ref(null)
 
 const itemsToDisplay = computed(() => {
     return store.searchActive ? store.searchResults : store.items
@@ -47,8 +49,15 @@ onMounted(async () => {
           :key="item.id"
           :item="item"
           class="grid-item"
+          @click="selectedItem = item"
+          style="cursor:pointer;"
         />
       </div>
+      <DetailModal
+        v-if="selectedItem"
+        :item="selectedItem"
+        @close="selectedItem = null"
+      />
     </div>
   </div>
 </template>
